@@ -37,5 +37,15 @@ export function createApp() {
     res.json(filtered)
   })
 
+  app.get('/videos/:id', async (req, res) => {
+    const videos = await readVideos()
+    const video = videos.find((item) => item.id === req.params.id)
+    if (!video) {
+      res.status(404).json({ error: 'not_found' })
+      return
+    }
+    res.json(video)
+  })
+
   return app
 }
