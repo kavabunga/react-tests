@@ -1,5 +1,6 @@
 import cors from 'cors'
 import express from 'express'
+import { withCache } from './cache/middleware.js'
 import { readFavoriteIds, readVideos, writeFavoriteIds } from './store.js'
 
 function matchesYear(video, year) {
@@ -21,6 +22,7 @@ async function findVideo(id) {
 
 export function createApp() {
   const app = express()
+  app.set('etag', false)
 
   app.use(cors({ origin: 'http://localhost:5173' }))
   app.use(express.json())
@@ -29,7 +31,7 @@ export function createApp() {
     res.json({ ok: true })
   })
 
-  app.get('/videos', async (req, res) => {
+  app.get('/videos', withCache('catalogue'), async (req, res) => {
     const [videos, favoriteIds] = await Promise.all([readVideos(), readFavoriteIds()])
     const kind = typeof req.query.kind === 'string' ? req.query.kind : null
     const q = typeof req.query.q === 'string' ? req.query.q.trim().toLowerCase() : ''
@@ -46,7 +48,7 @@ export function createApp() {
     res.json(filtered.map((video) => withFavorite(video, favoriteIds)))
   })
 
-  app.get('/videos/:id', async (req, res) => {
+  app.get('/videos/:id', withCache('item'), async (req, res) => {
     const [video, favoriteIds] = await Promise.all([
       findVideo(req.params.id),
       readFavoriteIds(),
@@ -83,7 +85,7 @@ export function createApp() {
     res.json({ id: video.id, isFavorite: false })
   })
 
-  app.get('/favorites', async (_req, res) => {
+  app.get('/favorites', withCache('favorites'), async (_req, res) => {
     const [videos, favoriteIds] = await Promise.all([readVideos(), readFavoriteIds()])
     const byId = new Map(videos.map((video) => [video.id, video]))
     const favorites = favoriteIds
