@@ -1,0 +1,443 @@
+[
+  {
+    "id": "Q17738",
+    "title": "Star Wars: Episode IV – A New Hope",
+    "kind": "movie",
+    "year": 1977,
+    "yearEnd": null,
+    "overview": "1977 film directed by George Lucas",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20Logo.svg"
+  },
+  {
+    "id": "Q181795",
+    "title": "Star Wars: Episode V – The Empire Strikes Back",
+    "kind": "movie",
+    "year": 1980,
+    "yearEnd": null,
+    "overview": "1980 American epic space opera film directed by Irvin Kershner",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Theempirestrikesback-logo2.svg"
+  },
+  {
+    "id": "Q181803",
+    "title": "Star Wars: Episode VI – Return of the Jedi",
+    "kind": "movie",
+    "year": 1983,
+    "yearEnd": null,
+    "overview": "1983 film directed by Richard Marquand",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Returnofthejedi-logo2.svg"
+  },
+  {
+    "id": "Q1383257",
+    "title": "Caravan of Courage: An Ewok Adventure",
+    "kind": "movie",
+    "year": 1984,
+    "yearEnd": null,
+    "overview": "1984 film by John Korty",
+    "posterUrl": null
+  },
+  {
+    "id": "Q714019",
+    "title": "Ewoks",
+    "kind": "animation",
+    "year": 1985,
+    "yearEnd": 1986,
+    "overview": "American-Canadian animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q738360",
+    "title": "Ewoks: The Battle for Endor",
+    "kind": "movie",
+    "year": 1985,
+    "yearEnd": null,
+    "overview": "1985 film directed by Jim Wheat and Ken Wheat",
+    "posterUrl": null
+  },
+  {
+    "id": "Q702261",
+    "title": "Star Wars: Droids",
+    "kind": "animation",
+    "year": 1985,
+    "yearEnd": 1986,
+    "overview": "American animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q165713",
+    "title": "Star Wars: Episode I – The Phantom Menace",
+    "kind": "movie",
+    "year": 1999,
+    "yearEnd": null,
+    "overview": "1999 film directed by George Lucas",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star-wars-episode-i---the-phantom-menace.png"
+  },
+  {
+    "id": "Q181069",
+    "title": "Star Wars: Episode II – Attack of the Clones",
+    "kind": "movie",
+    "year": 2002,
+    "yearEnd": null,
+    "overview": "2002 film directed by George Lucas",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20wars%20ep%202%20de.svg"
+  },
+  {
+    "id": "Q616313",
+    "title": "Star Wars: Clone Wars",
+    "kind": "animation",
+    "year": 2003,
+    "yearEnd": 2005,
+    "overview": "American animated television series from 2003–2005",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20Logo.svg"
+  },
+  {
+    "id": "Q42051",
+    "title": "Star Wars: Episode III – Revenge of the Sith",
+    "kind": "movie",
+    "year": 2005,
+    "yearEnd": null,
+    "overview": "2005 film directed by George Lucas",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Revengeofthesith-logo.svg"
+  },
+  {
+    "id": "Q382289",
+    "title": "Star Wars: The Clone Wars",
+    "kind": "animation",
+    "year": 2008,
+    "yearEnd": null,
+    "overview": "2008 film by Dave Filoni",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20The%20Clone%20Wars.png"
+  },
+  {
+    "id": "Q632672",
+    "title": "Star Wars: The Clone Wars",
+    "kind": "animation",
+    "year": 2008,
+    "yearEnd": 2020,
+    "overview": "2008–2020 American television series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20-%20The%20Clone%20Wars%20Season%201%20box%20sets.JPG"
+  },
+  {
+    "id": "Q4923380",
+    "title": "Blackstar Warrior",
+    "kind": "movie",
+    "year": 2010,
+    "yearEnd": null,
+    "overview": "2010 film by Matt Haley",
+    "posterUrl": null
+  },
+  {
+    "id": "Q10858522",
+    "title": "Laugh It Up, Fuzzball: The Family Guy Trilogy",
+    "kind": "movie",
+    "year": 2010,
+    "yearEnd": null,
+    "overview": "2010 film by Peter Shin, Dominic Polcino",
+    "posterUrl": null
+  },
+  {
+    "id": "Q11753786",
+    "title": "Lego Star Wars: The Empire Strikes Out",
+    "kind": "movie",
+    "year": 2012,
+    "yearEnd": null,
+    "overview": "2012 film",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Lego%20Star%20Wars%20Logo.svg"
+  },
+  {
+    "id": "Q28787",
+    "title": "Star Wars Rebels",
+    "kind": "animation",
+    "year": 2014,
+    "yearEnd": 2018,
+    "overview": "American 3D CGI animated television series from 2014–2018",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Star%20Wars%20Rebels%20schwarz.svg"
+  },
+  {
+    "id": "Q123289786",
+    "title": "Star Wars Rebels: Spark of Rebellion",
+    "kind": "movie",
+    "year": 2014,
+    "yearEnd": null,
+    "overview": "2014 film directed by Steward Lee",
+    "posterUrl": null
+  },
+  {
+    "id": "Q19605592",
+    "title": "Lego Star Wars: Droid Tales",
+    "kind": "animation",
+    "year": 2015,
+    "yearEnd": 2015,
+    "overview": "American animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q6074",
+    "title": "Star Wars: Episode VII – The Force Awakens",
+    "kind": "movie",
+    "year": 2015,
+    "yearEnd": null,
+    "overview": "2015 film directed by J.J. Abrams",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20The%20Force%20Awakens.jpg"
+  },
+  {
+    "id": "Q24204124",
+    "title": "Lego Star Wars: The Freemaker Adventures",
+    "kind": "animation",
+    "year": 2016,
+    "yearEnd": 2017,
+    "overview": "computer-animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q19590955",
+    "title": "Rogue One: A Star Wars Story",
+    "kind": "movie",
+    "year": 2016,
+    "yearEnd": null,
+    "overview": "2016 film directed by Gareth Edwards",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20Rogue%20One%20Logo.svg"
+  },
+  {
+    "id": "Q35863374",
+    "title": "Rogue One: A Star Wars Toy Story",
+    "kind": "movie",
+    "year": 2016,
+    "yearEnd": null,
+    "overview": "2016 short film directed by Raymond Montemayor",
+    "posterUrl": null
+  },
+  {
+    "id": "Q30140895",
+    "title": "Star Wars Forces of Destiny",
+    "kind": "animation",
+    "year": 2017,
+    "yearEnd": 2018,
+    "overview": "animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q18486021",
+    "title": "Star Wars: Episode VIII – The Last Jedi",
+    "kind": "movie",
+    "year": 2017,
+    "yearEnd": null,
+    "overview": "2017 film directed by Rian Johnson",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20Episode%20VIII%20The%20Last%20Jedi%20Word%20Logo.svg"
+  },
+  {
+    "id": "Q27038847",
+    "title": "Solo: A Star Wars Story",
+    "kind": "movie",
+    "year": 2018,
+    "yearEnd": null,
+    "overview": "2018 film directed by Ron Howard",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Cannes%202018%20Star%20Wars%202.jpg"
+  },
+  {
+    "id": "Q52346040",
+    "title": "Star Wars Resistance",
+    "kind": "animation",
+    "year": 2018,
+    "yearEnd": 2020,
+    "overview": "2018–2020 animated television series by Dave Filoni",
+    "posterUrl": null
+  },
+  {
+    "id": "Q33083022",
+    "title": "The Dark Resurgence: A Star Wars Story",
+    "kind": "movie",
+    "year": 2018,
+    "yearEnd": null,
+    "overview": "2017 short fan film directed by Michael McCumber",
+    "posterUrl": null
+  },
+  {
+    "id": "Q20977110",
+    "title": "Star Wars: Episode IX – The Rise of Skywalker",
+    "kind": "movie",
+    "year": 2019,
+    "yearEnd": null,
+    "overview": "2019 film directed by J.J. Abrams",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20The%20Rise%20of%20Skywalker.png"
+  },
+  {
+    "id": "Q56876444",
+    "title": "The Mandalorian",
+    "kind": "series",
+    "year": 2019,
+    "yearEnd": null,
+    "overview": "American space opera streaming television series from 2019",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/%E6%9B%BC%E8%BE%BE%E6%B4%9B%E4%BA%BA%E5%88%B0%E4%B8%8A%E6%B5%B7%E7%A7%91%E6%8A%80%E9%A6%86.png"
+  },
+  {
+    "id": "Q97365172",
+    "title": "Star Wars: The Bad Batch",
+    "kind": "animation",
+    "year": 2021,
+    "yearEnd": 2024,
+    "overview": "animated television series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20-%20The%20Bad%20Batch.svg"
+  },
+  {
+    "id": "Q104161600",
+    "title": "Star Wars: Visions",
+    "kind": "animation",
+    "year": 2021,
+    "yearEnd": 2023,
+    "overview": "American-Japanese animated anthology series set in the Star Wars universe",
+    "posterUrl": null
+  },
+  {
+    "id": "Q104396610",
+    "title": "The Book of Boba Fett",
+    "kind": "series",
+    "year": 2021,
+    "yearEnd": 2022,
+    "overview": "American streaming television series from 2021–2022",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/The%20Book%20of%20Boba%20Fett.svg"
+  },
+  {
+    "id": "Q60462338",
+    "title": "Andor",
+    "kind": "series",
+    "year": 2022,
+    "yearEnd": 2025,
+    "overview": "2022–2025 Star Wars television series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Andor.svg"
+  },
+  {
+    "id": "Q104154217",
+    "title": "Obi-Wan Kenobi",
+    "kind": "series",
+    "year": 2022,
+    "yearEnd": 2022,
+    "overview": "American streaming television series from 2022",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Obi%20Wan%20Kenobi%20series%20logo%20simplified.svg"
+  },
+  {
+    "id": "Q133810189",
+    "title": "Star Wars Tales",
+    "kind": "animation",
+    "year": 2022,
+    "yearEnd": null,
+    "overview": "series of animated television miniseries",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Tales%20logo.png"
+  },
+  {
+    "id": "Q112170063",
+    "title": "Tales of the Jedi",
+    "kind": "animation",
+    "year": 2022,
+    "yearEnd": 2022,
+    "overview": "American animated anthology series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Geschichten-der-jedi-logo.png"
+  },
+  {
+    "id": "Q104153367",
+    "title": "Ahsoka",
+    "kind": "series",
+    "year": 2023,
+    "yearEnd": null,
+    "overview": "American television series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20Ahsoka%20Logo.png"
+  },
+  {
+    "id": "Q116763978",
+    "title": "Star Wars: Young Jedi Adventures",
+    "kind": "animation",
+    "year": 2023,
+    "yearEnd": 2025,
+    "overview": "2023 animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q125338461",
+    "title": "Star Wars: Tales of the Empire",
+    "kind": "animation",
+    "year": 2024,
+    "yearEnd": null,
+    "overview": "animated television series from 2024",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Tales%20of%20the%20Empire%20logo.webp"
+  },
+  {
+    "id": "Q104161310",
+    "title": "The Acolyte",
+    "kind": "series",
+    "year": 2024,
+    "yearEnd": 2024,
+    "overview": "2024 American television series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20The%20Acolyte%20logo.png"
+  },
+  {
+    "id": "Q133810179",
+    "title": "Star Wars: Tales of the Underworld",
+    "kind": "animation",
+    "year": 2025,
+    "yearEnd": null,
+    "overview": "animated anthology television miniseries",
+    "posterUrl": null
+  },
+  {
+    "id": "Q134533491",
+    "title": "Star Wars: Maul – Shadow Lord",
+    "kind": "animation",
+    "year": 2026,
+    "yearEnd": null,
+    "overview": "2026 animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q124246549",
+    "title": "The Mandalorian and Grogu",
+    "kind": "movie",
+    "year": 2026,
+    "yearEnd": null,
+    "overview": "2026 film directed by Jon Favreau",
+    "posterUrl": null
+  },
+  {
+    "id": "Q104161817",
+    "title": "Lando",
+    "kind": "series",
+    "year": null,
+    "yearEnd": null,
+    "overview": "Upcoming American streaming television series set in the Star Wars universe",
+    "posterUrl": null
+  },
+  {
+    "id": "Q24034563",
+    "title": "Lego Star Wars: The Resistance Rises",
+    "kind": "animation",
+    "year": null,
+    "yearEnd": null,
+    "overview": "American animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q104154048",
+    "title": "Rangers of the New Republic",
+    "kind": "series",
+    "year": null,
+    "yearEnd": null,
+    "overview": "American streaming television series",
+    "posterUrl": "http://commons.wikimedia.org/wiki/Special:FilePath/Star%20Wars%20Rangers%20of%20the%20New%20Republic%20Logo.png"
+  },
+  {
+    "id": "Q3497055",
+    "title": "Star Wars Detours",
+    "kind": "animation",
+    "year": null,
+    "yearEnd": null,
+    "overview": "unaired animated television series",
+    "posterUrl": null
+  },
+  {
+    "id": "Q6145282",
+    "title": "The Story of the Faithful Wookiee",
+    "kind": "animation",
+    "year": null,
+    "yearEnd": null,
+    "overview": "animated segment of the 1978 television special The Star Wars Holiday Special",
+    "posterUrl": null
+  }
+]
