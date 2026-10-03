@@ -3,6 +3,8 @@ import express from 'express'
 import { withCache } from './cache/middleware.js'
 import { readFavoriteIds, readVideos, writeFavoriteIds } from './store.js'
 
+const DELAY = 1000
+
 function matchesYear(video, year) {
   if (video.year == null) return false
   if (video.yearEnd != null) {
@@ -45,14 +47,13 @@ export function createApp() {
       return true
     })
 
-    res.json(filtered.map((video) => withFavorite(video, favoriteIds)))
+    setTimeout(() => {
+      res.json(filtered.map((video) => withFavorite(video, favoriteIds)))
+    }, DELAY)
   })
 
   app.get('/videos/:id', withCache('item'), async (req, res) => {
-    const [video, favoriteIds] = await Promise.all([
-      findVideo(req.params.id),
-      readFavoriteIds(),
-    ])
+    const [video, favoriteIds] = await Promise.all([findVideo(req.params.id), readFavoriteIds()])
     if (!video) {
       res.status(404).json({ error: 'not_found' })
       return
@@ -71,7 +72,10 @@ export function createApp() {
       ids.push(video.id)
       await writeFavoriteIds(ids)
     }
-    res.json({ id: video.id, isFavorite: true })
+
+    setTimeout(() => {
+      res.json({ id: video.id, isFavorite: true })
+    }, DELAY)
   })
 
   app.delete('/videos/:id/favorite', async (req, res) => {

@@ -18,11 +18,7 @@ const SERIES_TYPES = new Set([
   'Q10476514', // web series
 ])
 
-const ANIMATION_TYPES = new Set([
-  'Q202866',
-  'Q581714',
-  'Q117467246',
-])
+const ANIMATION_TYPES = new Set(['Q202866', 'Q581714', 'Q117467246'])
 
 const ANIMATION_GENRES = new Set([
   'Q202866',
@@ -64,8 +60,7 @@ function yearFrom(value) {
 
 function kindFor(instances, genres) {
   const isAnimation =
-    instances.some((id) => ANIMATION_TYPES.has(id)) ||
-    genres.some((id) => ANIMATION_GENRES.has(id))
+    instances.some((id) => ANIMATION_TYPES.has(id)) || genres.some((id) => ANIMATION_GENRES.has(id))
   const isSeries = instances.some((id) => SERIES_TYPES.has(id))
   if (isAnimation) return 'animation'
   if (isSeries) return 'series'

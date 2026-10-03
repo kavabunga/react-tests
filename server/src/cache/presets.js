@@ -1,6 +1,6 @@
 export const cachePresets = {
   catalogue: {
-    cacheControl: 'public, max-age=60',
+    cacheControl: 'public, max-age=10',
     etag: true,
   },
   item: {
