@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import './App.css'
-import { Movies } from './Movies'
 
 function App() {
   const [isMounted, setIsMounted] = useState(false)
@@ -14,7 +13,6 @@ function App() {
       >
         List is {isMounted ? 'Mounted' : 'Unmounted'}
       </button>
-      {isMounted && <Movies />}
     </section>
   )
 }
