@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 4: Trigger, render, commit</title>
+    <link rel="stylesheet" href="../assets/course.css" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Lesson 4 · React runtime · 12 minutes</p>
+        <h1>Trigger, render, commit</h1>
+        <p class="lede">
+          A screen update is three React steps, then a browser paint. Rendering is calling your
+          function. The DOM changes only at commit.
+        </p>
+      </header>
+
+      <p><a href="./0003-jsx-is-not-the-dom.html">← Lesson 3: JSX is not the DOM</a></p>
+
+      <aside class="goal">
+        <strong>Tangible win</strong>
+        Read a log and point to the line where the DOM text actually changes.
+      </aside>
+
+      <h2>The gap from Lesson 3</h2>
+      <p>Look at your <code>src/main.tsx</code> as two different values:</p>
+      <pre>
+createRoot(document.getElementById("root"))  // DOM node: the container
+  .render(&lt;App /&gt;);                            // React element: the description</pre>
+      <p>
+        <code>createRoot</code> takes a <strong>live DOM node</strong>. React will own what goes
+        <em>inside</em> it. <code>root.render</code> takes a <strong>React node</strong> (JSX / a
+        React element), not a DOM node. You already found the container: <code>#root</code>.
+      </p>
+
+      <h2>Three React steps, then paint</h2>
+      <div class="diagram" aria-label="Trigger render commit">
+        <div>
+          <b>1 · Trigger</b>
+          <strong>Why render now</strong>
+          <p>First <code>root.render</code>, or <code>setState</code> from a click task.</p>
+        </div>
+        <div>
+          <b>2 · Render</b>
+          <strong>Call components</strong>
+          <p>React calls your function. It returns new descriptions. Do not change the DOM here.</p>
+        </div>
+        <div>
+          <b>3 · Commit</b>
+          <strong>Patch the DOM</strong>
+          <p>
+            React applies the smallest DOM updates that match the new tree. Then the browser may
+            paint.
+          </p>
+        </div>
+      </div>
+
+      <p>
+        Official wording: rendering is React calling your components. After that, React commits to
+        the DOM, then the browser paints.
+        <a href="https://react.dev/learn/render-and-commit">Render and Commit</a>.
+      </p>
+
+      <section class="lab">
+        <h3>Lab: watch the DOM stay old during render</h3>
+        <p>
+          The counter below is a real React root. Click it. In each pass, compare the
+          <code>render</code> line with the <code>commit</code> line. During render the button text
+          is still the previous value. After commit it matches the new <code>count</code>.
+        </p>
+        <p>
+          <code>paint: animation frame</code> is <code>requestAnimationFrame</code>, just before the
+          next paint. Same slot you saw in Lesson 2.
+        </p>
+
+        <div class="output-grid">
+          <div>
+            <p class="output-label">React host</p>
+            <div class="output" data-phase-host></div>
+          </div>
+          <div>
+            <p class="output-label">Phase log</p>
+            <pre class="output tree" data-phase-log></pre>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button type="button" class="secondary" data-action="clear-phase-log">Clear log</button>
+        </div>
+      </section>
+
+      <h2>What “virtual DOM” was pointing at</h2>
+      <p>
+        Your note in <code>App.tsx</code> is in the right direction: React compares descriptions in
+        memory, then updates only what changed in the DOM. The names to keep are
+        <strong>render</strong> (compare descriptions) and <strong>commit</strong> (touch the DOM).
+        Searching the live document is slower than walking JS objects. That is why render stays off
+        the DOM.
+      </p>
+
+      <aside class="callout">
+        <strong>Replace one common shortcut</strong>
+        “The component rendered, so the DOM changed” hides commit. The function can run and return
+        JSX while the button still shows the old text.
+      </aside>
+
+      <section
+        class="quiz"
+        data-quiz
+        data-correct-feedback="Correct. React calls your function, then patches the DOM, then the browser may paint."
+        data-incorrect-feedback="Try again. Render does not update the button. Commit does."
+      >
+        <fieldset>
+          <legend>When does the button’s <code>textContent</code> change?</legend>
+          <label
+            ><input type="radio" name="q4" data-correct="true" />Trigger, then render, then
+            commit</label
+          >
+          <label><input type="radio" name="q4" />Render, then trigger, then commit</label>
+          <label><input type="radio" name="q4" />Commit, then render, then trigger</label>
+        </fieldset>
+        <button type="button">Check answer</button>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <h2>Retrieval task</h2>
+      <ol class="checklist">
+        <li>What does <code>createRoot</code> take? What does <code>root.render</code> take?</li>
+        <li>Name the three React steps in order, then the browser step.</li>
+        <li>During render of count 1, is the DOM button already showing 1? Why?</li>
+      </ol>
+
+      <h2>Primary source</h2>
+      <p>
+        Read <a href="https://react.dev/learn/render-and-commit">React: Render and Commit</a> in
+        full. Use the <a href="../reference/dom-react-glossary.html">glossary</a> for
+        <em>trigger</em>, <em>render</em>, and <em>commit</em>.
+      </p>
+
+      <footer>
+        If a log line surprises you, send it. The log is the model. Next:
+        <a href="./0005-state-is-a-snapshot.html">Lesson 5: State is a snapshot</a>.
+      </footer>
+    </main>
+
+    <script src="../assets/quiz.js"></script>
+    <script type="module" src="../assets/render-commit-lab.js"></script>
+  </body>
+</html>

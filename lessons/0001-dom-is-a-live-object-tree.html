@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 1: The DOM is a live object tree</title>
+    <link rel="stylesheet" href="../assets/course.css" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Lesson 1 · DOM foundations · 10 minutes</p>
+        <h1>The DOM is a live object tree</h1>
+        <p class="lede">
+          Separate HTML text, DOM objects, and painted pixels. React only makes sense after these
+          are separate in your mental model.
+        </p>
+      </header>
+
+      <aside class="goal">
+        <strong>Tangible win</strong>
+        By the end, you can inspect one page value and say whether it is HTML source, a DOM node, or
+        pixels.
+      </aside>
+
+      <h2>Three things, not one</h2>
+      <div class="diagram" aria-label="HTML, DOM, and pixels">
+        <div>
+          <b>1 · HTML</b>
+          <strong>Text input</strong>
+          <p>The browser parses markup such as <code>&lt;button&gt;</code>.</p>
+        </div>
+        <div>
+          <b>2 · DOM</b>
+          <strong>Objects in memory</strong>
+          <p>The parser creates connected <code>Element</code> and <code>Text</code> nodes.</p>
+        </div>
+        <div>
+          <b>3 · Screen</b>
+          <strong>Painted pixels</strong>
+          <p>The browser uses the DOM and CSS to calculate layout and paint.</p>
+        </div>
+      </div>
+
+      <p>
+        The DOM is not HTML and it is not JavaScript. It is a Web API supplied by the browser.
+        JavaScript can hold references to DOM objects and call their methods.
+      </p>
+
+      <pre>
+const button = document.querySelector("button");
+
+button instanceof HTMLButtonElement;
+true
+
+typeof button;
+"object"</pre>
+
+      <p>
+        <code>button</code> is a JavaScript variable. Its value refers to a browser-created DOM
+        object. Changing that object can change the next pixels the browser paints.
+      </p>
+
+      <section class="lab">
+        <h3>Lab: parse text into nodes</h3>
+        <p>
+          Edit the HTML, then select <em>Parse HTML</em>. Compare the visible result with the node
+          tree. Select <em>Mutate one node</em> and notice that the original text area does not
+          change.
+        </p>
+
+        <label for="dom-source" class="output-label">HTML source</label>
+        <textarea id="dom-source" data-dom-source>
+<article class="card">
+  Hello <strong>DOM</strong>
+</article></textarea>
+
+        <div class="controls">
+          <button type="button" data-action="parse">Parse HTML</button>
+          <button type="button" class="secondary" data-action="mutate">Mutate one node</button>
+        </div>
+
+        <div class="output-grid">
+          <div>
+            <p class="output-label">Browser preview</p>
+            <div class="output" data-dom-preview></div>
+          </div>
+          <div>
+            <p class="output-label">Simplified DOM tree</p>
+            <pre class="output tree" data-dom-tree></pre>
+          </div>
+        </div>
+      </section>
+
+      <h2>What this changes in React</h2>
+      <p>
+        JSX does not return DOM nodes. It creates React elements: JavaScript descriptions of the UI
+        React should produce. React later commits DOM operations that make the browser document
+        match those descriptions.
+      </p>
+
+      <pre>
+const description = &lt;button&gt;Save&lt;/button&gt;;
+
+description instanceof HTMLButtonElement;
+false</pre>
+
+      <aside class="callout">
+        <strong>Replace one common shortcut</strong>
+        “React renders the DOM” hides two different steps. React renders by calling components, then
+        commits by changing DOM nodes.
+      </aside>
+
+      <section
+        class="quiz"
+        data-quiz
+        data-correct-feedback="Correct. The variable refers to an object supplied by the browser DOM API."
+        data-incorrect-feedback="Try again. Separate source text, React descriptions, and browser objects."
+      >
+        <fieldset>
+          <legend>What can <code>document.querySelector("button")</code> return?</legend>
+          <label
+            ><input type="radio" name="q1" data-correct="true" />A live DOM element object</label
+          >
+          <label><input type="radio" name="q1" />A stored HTML source string</label>
+          <label><input type="radio" name="q1" />A React component function value</label>
+        </fieldset>
+        <button type="button">Check answer</button>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <h2>Retrieval task</h2>
+      <ol class="checklist">
+        <li>Without looking above, explain HTML, DOM, and pixels in one sentence each.</li>
+        <li>
+          Open this lesson in DevTools and run <code>$0 instanceof Element</code> after selecting an
+          element.
+        </li>
+        <li>Explain why changing a DOM node does not rewrite the original HTML source.</li>
+      </ol>
+
+      <h2>Course path</h2>
+      <p>The next lessons will add one boundary at a time:</p>
+      <ol>
+        <li>
+          <a href="./0002-events-and-the-event-loop.html">Browser events and the event loop</a>
+        </li>
+        <li>JSX, React elements, and roots</li>
+        <li>Trigger → render → commit → paint</li>
+        <li>State snapshots, batching, and closures</li>
+        <li>Effects as synchronization and cleanup</li>
+        <li>Refs, layout Effects, and DOM ownership</li>
+        <li>Strict Mode, profiling, and debugging</li>
+      </ol>
+
+      <h2>Primary source</h2>
+      <p>
+        Read
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model"
+          >MDN: Document Object Model</a
+        >, from the start through “DOM interfaces.” Use the
+        <a href="../reference/dom-react-glossary.html">DOM and React glossary</a> when terms blur
+        together.
+      </p>
+
+      <footer>
+        Ask your teacher about any step that does not match what you see in DevTools. The runtime
+        observation wins; then we explain it.
+      </footer>
+    </main>
+
+    <script src="../assets/dom-tree-lab.js"></script>
+    <script src="../assets/quiz.js"></script>
+  </body>
+</html>

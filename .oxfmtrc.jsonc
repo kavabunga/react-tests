@@ -1,0 +1,11 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  // Markdown notes hold pseudo-code samples that the embedded-code formatter rewrites into
+  // different code. HTML is owned by the editor's vscode.html-language-features formatter, whose
+  // output oxfmt does not match.
+  "ignorePatterns": ["**/*.md", "**/*.html"],
+}

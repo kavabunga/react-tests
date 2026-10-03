@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 2: Events and the event loop</title>
+    <link rel="stylesheet" href="../assets/course.css" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Lesson 2 · Browser runtime · 12 minutes</p>
+        <h1>Events and the event loop</h1>
+        <p class="lede">
+          A click is not “React running.” It is a browser task. React’s <code>onClick</code> is a
+          listener inside that task.
+        </p>
+      </header>
+
+      <p>
+        <a href="./0001-dom-is-a-live-object-tree.html"
+          >← Lesson 1: The DOM is a live object tree</a
+        >
+      </p>
+
+      <aside class="goal">
+        <strong>Tangible win</strong>
+        Predict the log order of a click, a microtask, a timeout, and a paint-related callback.
+      </aside>
+
+      <h2>From Lesson 1, one missing sentence</h2>
+      <p>
+        You already have HTML and DOM. The third piece is paint: the browser turns the live DOM and
+        CSS into pixels. A node change does not paint by itself. Paint is a later step on the event
+        loop.
+      </p>
+
+      <h2>DOM nodes receive events</h2>
+      <p>
+        Elements implement
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventTarget">EventTarget</a>.
+        <code>addEventListener</code> stores a function on that object. When the user clicks, the
+        browser creates an <code>Event</code> and runs matching listeners as JavaScript.
+      </p>
+
+      <pre>
+const button = document.querySelector("button");
+
+button.addEventListener("click", (event) => {
+  event.target === button;
+  true
+});</pre>
+
+      <p>
+        React’s <code>onClick={handler}</code> is the same idea: React registers a listener and
+        later calls your function. See
+        <a href="https://react.dev/learn/responding-to-events">Responding to events</a>.
+      </p>
+
+      <h2>One loop, three slots</h2>
+      <div class="diagram" aria-label="Event loop steps">
+        <div>
+          <b>1 · Task</b>
+          <strong>One JS job</strong>
+          <p>
+            A click, a script, or a <code>setTimeout</code> callback. JavaScript runs this to the
+            end.
+          </p>
+        </div>
+        <div>
+          <b>2 · Microtasks</b>
+          <strong>Drain the queue</strong>
+          <p><code>queueMicrotask</code> and Promise <code>then</code> run now, before paint.</p>
+        </div>
+        <div>
+          <b>3 · Paint</b>
+          <strong>Maybe update pixels</strong>
+          <p>Then the browser may layout and paint, then take the next task.</p>
+        </div>
+      </div>
+
+      <p>
+        MDN states this order: one task, then all waiting microtasks, then the browser may update
+        rendering.
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide"
+          >Using microtasks</a
+        >.
+      </p>
+
+      <section class="lab">
+        <h3>Lab: read the order from the log</h3>
+        <p>
+          First guess the order. Then run both buttons. <code>animation frame</code> is scheduled
+          with <code>requestAnimationFrame</code>, which runs just before the next paint.
+        </p>
+
+        <div class="controls">
+          <button type="button" data-action="run-order">Schedule from this click</button>
+          <button type="button" class="secondary" data-action="click-order">
+            Same, labelled as click task
+          </button>
+          <button type="button" class="secondary" data-action="clear-log">Clear log</button>
+        </div>
+
+        <p class="output-label">Log</p>
+        <pre class="output tree" data-event-log></pre>
+      </section>
+
+      <h2>What this changes in React</h2>
+      <p>
+        When you click a React button, that click is one task. Your handler runs in that task. If
+        the handler calls <code>setState</code>, React can do more work before the browser paints. A
+        <code>setTimeout(..., 0)</code> handler is a later task, after paint may already have
+        happened.
+      </p>
+      <p>
+        You do not need the React details yet. Hold this rule:
+        <strong>user events, React work, and paint share one thread and one loop</strong>.
+      </p>
+
+      <aside class="callout">
+        <strong>Replace one common shortcut</strong>
+        “The click re-renders the page” hides the loop. The click is a task. Render and commit are
+        later JS work. Pixels update only if the browser paints.
+      </aside>
+
+      <section
+        class="quiz"
+        data-quiz
+        data-correct-feedback="Correct. After a task ends, microtasks run, then the browser may paint."
+        data-incorrect-feedback="Try again. Paint waits until the current task and its microtasks finish."
+      >
+        <fieldset>
+          <legend>
+            After a click listener schedules a microtask and a <code>setTimeout(0)</code>, what runs
+            first?
+          </legend>
+          <label
+            ><input type="radio" name="q2" data-correct="true" />task then microtasks then
+            paint</label
+          >
+          <label><input type="radio" name="q2" />paint then microtasks then task</label>
+          <label><input type="radio" name="q2" />task then paint then microtasks</label>
+        </fieldset>
+        <button type="button">Check answer</button>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <h2>Retrieval task</h2>
+      <ol class="checklist">
+        <li>Without looking, write the three event-loop slots in order.</li>
+        <li>Name one API that queues a task and one that queues a microtask.</li>
+        <li>In one sentence, say what React’s <code>onClick</code> is, in browser terms.</li>
+      </ol>
+
+      <h2>Primary source</h2>
+      <p>
+        Read
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide"
+          >MDN: Using microtasks</a
+        >, the “Tasks vs. microtasks” section. Keep the
+        <a href="../reference/dom-react-glossary.html">glossary</a> open for <em>task</em>,
+        <em>microtask</em>, and <em>paint</em>.
+      </p>
+
+      <footer>
+        Ask if the log order surprises you. The log is the source of truth; then we name the slots.
+        Next: <a href="./0003-jsx-is-not-the-dom.html">Lesson 3: JSX is not the DOM</a>.
+      </footer>
+    </main>
+
+    <script src="../assets/event-loop-lab.js"></script>
+    <script src="../assets/quiz.js"></script>
+  </body>
+</html>

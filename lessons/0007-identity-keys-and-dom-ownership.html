@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 7: Identity, keys, and DOM ownership</title>
+    <link rel="stylesheet" href="../assets/course.css" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Lesson 7 · Identity and reuse · 30 minutes</p>
+        <h1>Identity, keys, and DOM ownership</h1>
+        <p class="lede">
+          The hard question is not “did React re-render?” It is “did React treat this as the same
+          thing?”
+        </p>
+      </header>
+
+      <p>
+        <a href="./0006-hooks-across-render-commit-and-paint.html"
+          >← Lesson 6: Hooks across render, commit, and paint</a
+        >
+      </p>
+
+      <aside class="goal">
+        <strong>Tangible win</strong>
+        Predict whether a state value, DOM node, ref, or Effect will survive the next render.
+      </aside>
+
+      <h2>1. The identity rule</h2>
+      <p>React preserves state by identity, not by source code text. The practical rule is:</p>
+      <pre>
+same type + same position + same key
+= same identity</pre>
+      <p>
+        When identity stays the same, React tries to reuse the existing subtree: state is preserved,
+        DOM nodes are often reused, refs keep pointing at the same committed nodes, and Effects only
+        restart if their dependencies changed.
+      </p>
+      <p>
+        When identity changes, React remounts: old cleanup runs, old DOM nodes are removed, refs
+        detach, new DOM nodes are committed, and state starts fresh.
+      </p>
+
+      <h2>2. Props do not define identity</h2>
+      <p>
+        If the same component type stays in the same position, changing props alone does not reset
+        its state.
+      </p>
+
+      <pre>
+{isTaylor
+  ? &lt;Counter person="Taylor" /&gt;
+  : &lt;Counter person="Sarah" /&gt;}</pre>
+
+      <p>
+        Without explicit keys, both branches produce one <code>Counter</code> in one position, so
+        React keeps the same state. The person label changes, but the local counter state survives.
+      </p>
+      <p>
+        Primary source:
+        <a href="https://react.dev/learn/preserving-and-resetting-state"
+          >Preserving and Resetting State</a
+        >.
+      </p>
+
+      <section
+        class="quiz"
+        data-quiz
+        data-correct-feedback="Correct. Props changed, but the identity stayed the same."
+        data-incorrect-feedback="Try again. React preserves by identity, not by prop value."
+      >
+        <fieldset>
+          <legend>
+            One component stays in the same position, but its <code>person</code> prop changes. What
+            happens?
+          </legend>
+          <label
+            ><input type="radio" name="q7a" data-correct="true" />State usually stays
+            preserved</label
+          >
+          <label><input type="radio" name="q7a" />State resets on every prop change</label>
+          <label><input type="radio" name="q7a" />DOM always remounts from scratch</label>
+        </fieldset>
+        <button type="button">Check answer</button>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <h2>3. What <code>key</code> really changes</h2>
+      <p><code>key</code> is not a render hint. It is an identity override inside one parent.</p>
+      <pre>
+{isTaylor
+  ? &lt;Counter key="Taylor" person="Taylor" /&gt;
+  : &lt;Counter key="Sarah" person="Sarah" /&gt;}</pre>
+      <p>
+        Now React sees two different identities in the same position. Switching players remounts the
+        subtree: local state resets, the old ref detaches, and Effects clean up and set up again.
+      </p>
+      <p>
+        A changed key is a controlled reset. Good for clearing a form. Bad when it happens by
+        accident.
+      </p>
+
+      <h2>4. DOM ownership follows identity</h2>
+      <p>
+        You already learned that React owns DOM nodes inside a root. The missing piece is that React
+        only keeps owning the <em>same node</em> while identity stays the same.
+      </p>
+      <ul>
+        <li>Same identity: React may update attributes and text on the existing node.</li>
+        <li>New identity: React removes the old node and commits a new one.</li>
+        <li>Refs follow the committed node, so a remount means a new <code>ref.current</code>.</li>
+      </ul>
+      <p>
+        This is why a keyed reset can clear uncontrolled input state and why a keyed canvas can lose
+        its drawing: the DOM node itself changed.
+      </p>
+
+      <h2>5. Stable keys in lists</h2>
+      <p>
+        In lists, <code>key</code> tells React which logical item each child represents across
+        reorder, insert, and delete. A stable data id preserves the right identity.
+      </p>
+      <pre>
+items.map((item) =&gt; (
+  &lt;Row key={item.id} item={item} /&gt;
+))</pre>
+      <p>
+        Index keys work only when the list order never changes and items are never inserted or
+        removed in the middle. If order changes, React can preserve the wrong state on the wrong row
+        because it matched by position, not by item identity.
+      </p>
+      <p>Primary source: <a href="https://react.dev/learn/rendering-lists">Rendering Lists</a>.</p>
+
+      <div class="split">
+        <div class="panel">
+          <h3>Stable key</h3>
+          <p><code>key={item.id}</code></p>
+          <p>Local state, focus, and refs stay attached to the same logical item.</p>
+        </div>
+        <div class="panel">
+          <h3>Index key</h3>
+          <p><code>key={index}</code></p>
+          <p>
+            Local state can move to another row after reorder because identity followed position.
+          </p>
+        </div>
+      </div>
+
+      <h2>6. Re-render vs remount</h2>
+      <table class="hook-matrix">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Re-render, same identity</th>
+            <th>Remount, new identity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Local state</td>
+            <td>Preserved</td>
+            <td>Reset</td>
+          </tr>
+          <tr>
+            <td>DOM node</td>
+            <td>Usually reused</td>
+            <td>Replaced</td>
+          </tr>
+          <tr>
+            <td>Ref</td>
+            <td>Same node if reused</td>
+            <td>Old ref detaches, new ref attaches</td>
+          </tr>
+          <tr>
+            <td>Effect</td>
+            <td>Only restarts if dependencies changed</td>
+            <td>Old cleanup, new setup</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>7. Lab: preserve, reset, and misplace state</h2>
+      <p>This lab shows three cases:</p>
+      <ol>
+        <li>One component in one position, with and without an explicit key.</li>
+        <li>A keyed input reset that replaces the DOM node.</li>
+        <li>Two lists: stable id keys versus index keys under reorder.</li>
+      </ol>
+      <p>Try this order:</p>
+      <ol>
+        <li>
+          Increment the player counter, then switch player with <strong>No explicit key</strong>.
+        </li>
+        <li>Turn on <strong>Using explicit key</strong>, then switch player again.</li>
+        <li>Type into both lists, then reverse order and compare where the drafts end up.</li>
+        <li>Type into the reset input, then select <strong>Change key and reset</strong>.</li>
+      </ol>
+
+      <div class="output-grid">
+        <div>
+          <p class="output-label">React host</p>
+          <div class="output" data-identity-host></div>
+        </div>
+        <div>
+          <p class="output-label">Identity log</p>
+          <pre class="output tree" data-identity-log></pre>
+        </div>
+      </div>
+      <div class="controls">
+        <button type="button" class="secondary" data-action="clear-identity-log">Clear log</button>
+      </div>
+
+      <h2>8. Reading the identity log</h2>
+      <p>
+        When the same subtree keeps its identity, you should see setup/cleanup only when the tracked
+        dependencies change. When key changes, you should see cleanup for the old node id and setup
+        for a new node id.
+      </p>
+      <p>
+        That is the runtime proof that React did not “just render again.” It replaced one identity
+        with another.
+      </p>
+
+      <section
+        class="quiz"
+        data-quiz
+        data-correct-feedback="Correct. Reorder plus index keys can preserve the wrong state on the wrong row."
+        data-incorrect-feedback="Try again. The bug is wrong identity, not a missing re-render."
+      >
+        <fieldset>
+          <legend>
+            A list is reversed and one row's input value appears on a different item. Most likely
+            cause?
+          </legend>
+          <label
+            ><input type="radio" name="q7b" data-correct="true" />Index keys matched the wrong
+            row</label
+          >
+          <label><input type="radio" name="q7b" />The browser forgot the input value</label>
+          <label><input type="radio" name="q7b" />React skipped the render phase</label>
+        </fieldset>
+        <button type="button">Check answer</button>
+        <p class="feedback" aria-live="polite"></p>
+      </section>
+
+      <h2>9. Debug rule</h2>
+      <p>When something unexpectedly resets or survives, ask these in order:</p>
+      <ol>
+        <li>Is it the same component type?</li>
+        <li>Is it rendered in the same parent position?</li>
+        <li>Did its key stay the same?</li>
+        <li>
+          If identity stayed the same, did an Effect restart only because its dependencies changed?
+        </li>
+      </ol>
+
+      <aside class="callout">
+        <strong>Replace one common shortcut</strong>
+        “React rerendered, so my form reset” is usually wrong. A rerender with the same identity
+        preserves state. A reset means the identity changed or you explicitly cleared the value.
+      </aside>
+
+      <h2>Repository practice</h2>
+      <p>
+        Work through
+        <a href="../exercises/identity-and-keys/TASKS.md">the identity and keys exercises</a>. They
+        take the lesson into `src/App.tsx` and cover preservation, reset, reorder bugs, ref
+        replacement, and keyed canvas remounts.
+      </p>
+      <p>
+        Keep
+        <a href="../reference/identity-keys-and-dom-reuse.html">Identity, keys, and DOM reuse</a>
+        open beside the lesson.
+      </p>
+
+      <h2>Retrieval task</h2>
+      <ol class="checklist">
+        <li>What three things define identity for state preservation?</li>
+        <li>
+          One component stays in the same position but gets different props. Why can its state stay?
+        </li>
+        <li>What does changing a key do to local state, refs, and DOM nodes?</li>
+        <li>
+          Why can <code>key={index}</code> move a draft input value to the wrong row after reorder?
+        </li>
+        <li>Name one case where forcing a reset with a key is useful.</li>
+      </ol>
+
+      <h2>Primary sources</h2>
+      <ul>
+        <li>
+          <a href="https://react.dev/learn/preserving-and-resetting-state"
+            >Preserving and Resetting State</a
+          >
+        </li>
+        <li><a href="https://react.dev/learn/rendering-lists">Rendering Lists</a></li>
+        <li>
+          <a href="https://react.dev/learn/manipulating-the-dom-with-refs"
+            >Manipulating the DOM with Refs</a
+          >
+        </li>
+      </ul>
+
+      <footer>
+        Bring me the retrieval answers or one confusing lab result. Identity bugs become much easier
+        once you name whether React reused or remounted.
+      </footer>
+    </main>
+
+    <script src="../assets/quiz.js"></script>
+    <script type="module" src="../assets/identity-keys-lab.js"></script>
+  </body>
+</html>

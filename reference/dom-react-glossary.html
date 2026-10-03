@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DOM and React glossary</title>
+    <link rel="stylesheet" href="../assets/course.css" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Quick reference</p>
+        <h1>DOM and React glossary</h1>
+        <p class="lede">Use these terms precisely when explaining runtime behavior.</p>
+      </header>
+
+      <h2>Browser model</h2>
+      <dl>
+        <dt><strong>HTML source</strong></dt>
+        <dd>
+          Text that the HTML parser reads. It is input to DOM construction, not the live page
+          object.
+        </dd>
+
+        <dt><strong>DOM</strong></dt>
+        <dd>A browser API that represents a document as objects arranged in a node tree.</dd>
+
+        <dt><strong>Node</strong></dt>
+        <dd>
+          An object in a DOM tree. Common node types include <code>Document</code>,
+          <code>Element</code>, <code>Text</code>, and <code>Comment</code>.
+        </dd>
+
+        <dt><strong>Element</strong></dt>
+        <dd>
+          A DOM node representing an HTML or SVG element. An element can own attributes and child
+          nodes.
+        </dd>
+
+        <dt><strong>Paint</strong></dt>
+        <dd>
+          A browser step that turns layout and style results into pixels. A DOM change and a paint
+          are related but not identical events.
+        </dd>
+
+        <dt><strong>EventTarget</strong></dt>
+        <dd>
+          A DOM object that can receive events and hold listeners. <code>Element</code>,
+          <code>Document</code>, and <code>Window</code> are EventTargets.
+        </dd>
+
+        <dt><strong>Event</strong></dt>
+        <dd>
+          An object the browser dispatches to describe something that happened, such as a click.
+          <code>event.target</code>
+          is the node where it started.
+        </dd>
+
+        <dt><strong>Task</strong></dt>
+        <dd>
+          A unit of JavaScript work on the event loop. A click listener run and a
+          <code>setTimeout</code> callback are tasks.
+        </dd>
+
+        <dt><strong>Microtask</strong></dt>
+        <dd>
+          Work that runs after the current task finishes and before the browser paints. Promise
+          <code>then</code> callbacks are microtasks.
+        </dd>
+
+        <dt><strong>Event loop</strong></dt>
+        <dd>
+          The browser loop that runs one task, then all waiting microtasks, then may paint, then
+          repeats.
+        </dd>
+      </dl>
+
+      <h2>React model</h2>
+      <dl>
+        <dt><strong>React element</strong></dt>
+        <dd>
+          A JavaScript description of UI. JSX creates React elements; it does not create DOM nodes
+          by itself.
+        </dd>
+
+        <dt><strong>Root</strong></dt>
+        <dd>
+          The object returned by <code>createRoot(domNode)</code>. React manages DOM inside that
+          node after <code>root.render</code>.
+        </dd>
+
+        <dt><strong>Trigger</strong></dt>
+        <dd>
+          The reason React will call components: the first <code>root.render</code>, or a state
+          update such as <code>setState</code> from an event.
+        </dd>
+
+        <dt><strong>Render</strong></dt>
+        <dd>
+          React calls components to calculate the next UI description. Render should not mutate the
+          DOM.
+        </dd>
+
+        <dt><strong>Commit</strong></dt>
+        <dd>
+          React applies the required changes to its host environment. In a browser React root, the
+          host environment is the DOM.
+        </dd>
+
+        <dt><strong>Effect</strong></dt>
+        <dd>
+          Synchronization between React state and an external system. An Effect starts and stops
+          synchronization after relevant commits.
+        </dd>
+
+        <dt><strong>State snapshot</strong></dt>
+        <dd>
+          The state values React gives a component for one render. Event handlers from that render
+          keep seeing those same values, even if a setter already ran.
+        </dd>
+
+        <dt><strong>Batching</strong></dt>
+        <dd>
+          React processes several state updates from one event as one later render, not as several
+          immediate DOM writes.
+        </dd>
+
+        <dt><strong>Updater function</strong></dt>
+        <dd>
+          A function passed to a setter, such as <code>n => n + 1</code>. React applies it to the
+          queued state, not to the snapshot from the current render.
+        </dd>
+
+        <dt><strong>Ref</strong></dt>
+        <dd>
+          A stable object whose <code>current</code> value can hold data outside rendering,
+          including a DOM element managed by React.
+        </dd>
+      </dl>
+
+      <footer>
+        Sources:
+        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model">MDN DOM</a
+        >, <a href="https://dom.spec.whatwg.org/">WHATWG DOM Standard</a>, and
+        <a href="https://react.dev/learn/render-and-commit">React: Render and Commit</a>.
+      </footer>
+    </main>
+  </body>
+</html>
