@@ -1,0 +1,48 @@
+.accounts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.accounts-table-header {
+  align-self: flex-start;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.accounts-table {
+  border-collapse: collapse;
+  font-size: 0.6rem;
+  line-height: 1.2;
+  font-family: monospace;
+
+  th {
+    text-align: left;
+    padding: 0.5rem;
+    cursor: pointer;
+
+    &[data-column='clientName'] {
+      min-width: 250px;
+    }
+
+    &[data-column='lastOperationAt'] {
+      min-width: 150px;
+    }
+
+    &.sorted {
+      background-color: #e0e0e0;
+    }
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+
+  td {
+    text-align: left;
+    padding: 0.2rem;
+    border: 1px solid #ccc;
+  }
+}
