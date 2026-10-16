@@ -1,8 +1,7 @@
 import { createServer } from 'node:http'
-import express, { type Request } from 'express'
+import express from 'express'
 import { WebSocket, WebSocketServer } from 'ws'
-import { z } from 'zod'
-import { applyTick, listAccounts, type AccountQuery, type AccountUpdated } from './store.ts'
+import { applyTick, listAccounts, type AccountUpdated } from './store.ts'
 
 const TICK_MS = 1000
 const UPDATES_PER_TICK = 3
@@ -11,13 +10,6 @@ const port = readPort(process.env.PORT)
 const DROP_RATE = Number(process.env.CHAOS_DROP ?? 0)
 const CORRUPT_RATE = Number(process.env.CHAOS_CORRUPT ?? 0)
 
-const accountQuerySchema = z.object({
-  tier: z.enum(['priority', 'regular']).optional(),
-  q: z.string().optional(),
-  minAmount: z.coerce.number().finite().optional(),
-  maxAmount: z.coerce.number().finite().optional(),
-})
-
 const app = express()
 
 app.use((_req, res, next) => {
@@ -25,18 +17,8 @@ app.use((_req, res, next) => {
   next()
 })
 
-app.get('/accounts', (req, res) => {
-  const query = readAccountsQuery(req)
-  if (query === undefined) {
-    res.status(400).json({ error: 'Invalid query' })
-    return
-  }
-  const { minAmount, maxAmount } = query
-  if (minAmount !== undefined && maxAmount !== undefined && minAmount > maxAmount) {
-    res.status(400).json({ error: 'minAmount is greater than maxAmount' })
-    return
-  }
-  res.json(listAccounts(query))
+app.get('/accounts', (_req, res) => {
+  res.json(listAccounts())
 })
 
 const server = createServer(app)
@@ -65,7 +47,7 @@ server.on('error', fail)
 wss.on('error', fail)
 
 server.listen(port, () => {
-  const { revision, accounts } = listAccounts({})
+  const { revision, accounts } = listAccounts()
   console.log(`Accounts API  http://localhost:${port}/accounts`)
   console.log(`WebSocket     ws://localhost:${port}/ws`)
   console.log(`${accounts.length} accounts, revision ${revision}`)
@@ -95,22 +77,6 @@ function broadcast(event: AccountUpdated) {
 
     client.send(JSON.stringify(event))
   }
-}
-
-function readAccountsQuery(req: Request): AccountQuery | undefined {
-  const raw: Record<string, string> = {}
-  for (const [key, value] of Object.entries(req.query)) {
-    const picked = Array.isArray(value) ? value[0] : value
-    if (picked === undefined) continue
-    if (typeof picked !== 'string') return undefined
-    const trimmed = picked.trim()
-    if (trimmed === '') continue
-    raw[key] = trimmed
-  }
-
-  const parsed = accountQuerySchema.safeParse(raw)
-  if (!parsed.success) return undefined
-  return parsed.data
 }
 
 function readPort(value: string | undefined): number {
