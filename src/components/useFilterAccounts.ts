@@ -15,6 +15,8 @@ export function useFilterAccounts(accounts: Account[]) {
   const [filter, setFilter] = useState<Filter>({})
 
   const filteredAccounts = useMemo(() => {
+    if (!filter) return accounts
+
     return accounts.filter((account) => {
       if (!filter) return true
 

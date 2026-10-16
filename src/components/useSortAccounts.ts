@@ -12,6 +12,8 @@ export function useSortAccounts(accounts: Account[]) {
   const [sortState, setSortState] = useState<SortState>({ column: null, direction: 'asc' })
 
   const sortedAccounts = useMemo(() => {
+    if (sortState.column === null) return accounts
+
     return [...accounts].sort((a, b) => {
       const direction = sortState.direction === 'asc' ? 1 : -1
       if (sortState.column === 'clientName')
