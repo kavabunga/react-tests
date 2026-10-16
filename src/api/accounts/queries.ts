@@ -27,6 +27,7 @@ export function accountsQueryOptions() {
     queryKey: accountKeys.all,
     queryFn: fetchAccounts,
     staleTime: Infinity,
+    // TODO: Показать что данные устарели и запросить обновление
     retry: (failureCount, error) =>
       // Retry on 5xx errors, up to MAX_RETRY_COUNT times
       isApiError(error) && error.status >= 500 && failureCount < ACCOUNTS_MAX_RETRY_COUNT,

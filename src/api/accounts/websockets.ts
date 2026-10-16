@@ -8,6 +8,7 @@ let accountsWebSocket: WebSocket | null = null
 export function getOrCreateAccountsWebSocket() {
   if (accountsWebSocket) return accountsWebSocket
   accountsWebSocket = new WebSocket(WS_URL)
+  // TODO: Проверить что реконнект работает
 
   accountsWebSocket.onopen = () => {
     console.log('Accounts WebSocket opened')
