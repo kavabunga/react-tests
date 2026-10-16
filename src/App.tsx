@@ -1,4 +1,7 @@
 import { useState } from 'react'
+
+import { Accounts } from './components/Accounts'
+
 import './App.css'
 
 function App() {
@@ -13,6 +16,7 @@ function App() {
       >
         List is {isMounted ? 'Mounted' : 'Unmounted'}
       </button>
+      {isMounted && <Accounts />}
     </section>
   )
 }

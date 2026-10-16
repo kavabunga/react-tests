@@ -1,10 +1,13 @@
 .app {
-  max-width: 800px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
   padding: 2rem;
 }
 
 .list-toggle-button {
+  align-self: flex-start;
   font-size: 1rem;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
