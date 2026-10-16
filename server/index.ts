@@ -17,8 +17,13 @@ app.use((_req, res, next) => {
   next()
 })
 
-app.get('/accounts', (_req, res) => {
-  res.json(listAccounts())
+app.get('/accounts', (req, res) => {
+  const changedAfter = readChangedAfter(req.query.revision)
+  if (changedAfter === null) {
+    res.status(400).json({ error: 'revision must be an integer >= 0' })
+    return
+  }
+  res.json(listAccounts(changedAfter))
 })
 
 const server = createServer(app)
@@ -77,6 +82,15 @@ function broadcast(event: AccountUpdated) {
 
     client.send(JSON.stringify(event))
   }
+}
+
+// undefined: param omitted. null: present, but not an integer >= 0.
+function readChangedAfter(value: unknown): number | undefined | null {
+  if (value === undefined) return undefined
+  if (typeof value !== 'string' || !/^(0|[1-9]\d*)$/.test(value)) return null
+  const revision = Number(value)
+  if (!Number.isSafeInteger(revision)) return null
+  return revision
 }
 
 function readPort(value: string | undefined): number {
