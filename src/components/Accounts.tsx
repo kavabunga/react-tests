@@ -2,12 +2,19 @@ import { memo, useCallback, useMemo } from 'react'
 
 import { cn } from '../shared/cn'
 import type { Account } from '../shared/schemas'
-import { useAccounts } from '../api/accounts/useAccounts'
+import { useAccounts, useAccountsSync, WebSocketStatus } from '../api/accounts/useAccounts'
 import { useSortAccounts } from './useSortAccounts'
 import { useFilterAccounts } from './useFilterAccounts'
 import { AccountFilter } from './AccountFilters'
 
 import './Accounts.css'
+
+const CONNECTION_STATUS_LABELS = {
+  [WebSocketStatus.Connecting]: 'Connecting',
+  [WebSocketStatus.Open]: 'In Sync',
+  [WebSocketStatus.Closed]: 'Out of Sync',
+  [WebSocketStatus.Error]: 'Error',
+}
 
 const COLUMNS: { label: string; name: keyof Account }[] = [
   {
@@ -30,6 +37,7 @@ const COLUMNS: { label: string; name: keyof Account }[] = [
 
 export function Accounts() {
   const { data, isLoading, error } = useAccounts()
+  const { status, throttle, setThrottle } = useAccountsSync()
 
   const accountsList = useMemo(() => {
     return Array.from(data?.accounts.values() ?? [])
@@ -51,7 +59,27 @@ export function Accounts() {
 
   return (
     <div className="accounts-container">
-      <h1 className="accounts-table-header">Accounts</h1>
+      <div className="accounts-table-header-container">
+        <div className="accounts-table-header-item">
+          <h1 className="accounts-table-header">Accounts</h1>
+          <span
+            className={cn(
+              'accounts-table-header-badge',
+              status === WebSocketStatus.Open && 'active',
+            )}
+          >
+            {CONNECTION_STATUS_LABELS[status]}
+          </span>
+        </div>
+        <input
+          className="accounts-table-header-input"
+          type="number"
+          value={throttle}
+          onChange={(e) => setThrottle(Number(e.target.value))}
+          min={0}
+          max={10000}
+        />
+      </div>
       <AccountFilter filter={filter} setFilter={setFilter} />
       <table className="accounts-table">
         <thead>

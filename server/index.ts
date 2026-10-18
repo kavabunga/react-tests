@@ -3,7 +3,7 @@ import express from 'express'
 import { WebSocket, WebSocketServer } from 'ws'
 import { applyTick, listAccounts, type AccountUpdated } from './store.ts'
 
-const TICK_MS = 1000
+const TICK_MS = 100
 const UPDATES_PER_TICK = 3
 const port = readPort(process.env.PORT)
 

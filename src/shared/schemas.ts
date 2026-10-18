@@ -24,6 +24,10 @@ export const accountChangesMessageSchema = z
     return { type: newType, action, ...message }
   })
 
+export const accountListQuerySchema = z.object({
+  revision: z.number().optional(),
+})
+
 export const accountListSchema = z.object({
   revision: z.number(),
   accounts: z
@@ -35,10 +39,13 @@ export const messageSchema = z.union([accountChangesMessageSchema])
 
 export type AccountChangesMessage = z.infer<typeof accountChangesMessageSchema>
 export type AccountChanges = z.infer<typeof accountChangesSchema>
+export type AccountListQuery = z.infer<typeof accountListQuerySchema>
 export type AccountList = z.infer<typeof accountListSchema>
 export type Account = z.infer<typeof accountSchema>
 export type Tier = z.infer<typeof tierSchema>
 export type Message = z.infer<typeof messageSchema>
+
+export type AccountsUpdatesBatch = Array<AccountChanges & { revision: number; id: string }>
 
 export function parseAccountList(data: unknown): AccountList {
   return accountListSchema.parse(data)

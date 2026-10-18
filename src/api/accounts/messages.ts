@@ -1,7 +1,91 @@
-import { queryClient } from '../../shared/client'
-import type { Message, Account, AccountList } from '../../shared/schemas'
+import type { AccountChanges, AccountsUpdatesBatch, Message } from '../../shared/schemas'
+import { batchUpdateAccounts } from './queries'
 
-import { accountKeys } from './queries'
+class AccountsUpdatesQueue {
+  private updates: AccountsUpdatesBatch = []
+  private queueLimit: number
+
+  constructor(options?: { queueLimit: number }) {
+    this.queueLimit = options?.queueLimit ?? 1000
+  }
+
+  getUpdates(): AccountsUpdatesBatch {
+    return this.updates
+  }
+
+  add(id: string, changes: AccountChanges, revision: number): void {
+    const update: AccountChanges & { revision: number; id: string } = { ...changes, revision, id }
+    this.updates.push(update)
+    if (this.updates.length > this.queueLimit) {
+      this.updates.shift()
+    }
+  }
+
+  clear() {
+    this.updates = []
+  }
+}
+
+interface AccountsUpdatesBatchControllerUpdateParams {
+  id: string
+  changes: AccountChanges
+  revision: number
+}
+
+class AccountsUpdatesBatchController {
+  private queue = new AccountsUpdatesQueue()
+  private onUpdate: (updates: AccountsUpdatesBatch) => boolean
+  private throttleTimeout: number | null = null
+  private throttleDelay: number = 0
+
+  constructor({ onUpdate }: { onUpdate: (updates: AccountsUpdatesBatch) => boolean }) {
+    this.onUpdate = onUpdate
+  }
+
+  private update(): boolean {
+    const updates = this.queue.getUpdates()
+    if (!updates[0]) return false
+
+    const isSuccess = this.onUpdate(updates)
+    if (isSuccess) {
+      this.queue.clear()
+    }
+
+    return isSuccess
+  }
+
+  private scheduleUpdate(): void {
+    this.throttleTimeout = setTimeout(() => {
+      this.throttleTimeout = null
+      const isSuccess = this.update()
+      if (isSuccess) {
+        this.scheduleUpdate()
+      }
+    }, this.throttleDelay)
+  }
+
+  onUpdateMessage({ id, changes, revision }: AccountsUpdatesBatchControllerUpdateParams): void {
+    this.queue.add(id, changes, revision)
+
+    if (this.throttleTimeout !== null) {
+      return
+    }
+
+    const isSuccess = this.update()
+
+    if (isSuccess) {
+      this.scheduleUpdate()
+    }
+  }
+
+  setThrottleDelay(delay: number): void {
+    this.throttleDelay = delay
+  }
+}
+
+export const accountsUpdatesBatchController = new AccountsUpdatesBatchController({
+  onUpdate: batchUpdateAccounts,
+})
 
 export function handleAccountsMessage(message: Message) {
   switch (message.action) {
@@ -11,43 +95,5 @@ export function handleAccountsMessage(message: Message) {
 }
 
 function handleAccountsUpdatedMessage(message: Message) {
-  const cachedData = queryClient.getQueryData<AccountList>(accountKeys.all)
-
-  // Keep the revision updates consistent
-  // TODO: Попробовать запрашивать разницу между revision и message.revision
-  // TODO: Добавить throttling обновлений и буфер для сообщенений
-  if (!cachedData) return
-
-  // If new revision is older than the current revision, return the old data
-  // TODO: Это может никогда не произойти
-  if (cachedData.revision >= message.revision) return
-
-  // If the revision is too old, invalidate the query
-  // TODO: Добавить поддержку на бэкенде для выдачи только разницы между revision и message.revision
-  if (cachedData.revision < message.revision - 1) {
-    queryClient.invalidateQueries({ queryKey: accountKeys.all }, { cancelRefetch: false })
-    return
-  }
-
-  const cachedAccount = cachedData.accounts.get(message.id)
-
-  // If the account is not found, invalidate the query
-  if (!cachedAccount) {
-    queryClient.invalidateQueries({ queryKey: accountKeys.all }, { cancelRefetch: false })
-    return
-  }
-
-  // Updating the query data directly due to high frequency of updates
-  queryClient.setQueryData(accountKeys.all, () =>
-    updateAccountsQueryData(cachedData, cachedAccount, message),
-  )
-}
-
-function updateAccountsQueryData(oldData: AccountList, oldAccount: Account, message: Message) {
-  const { id, revision, changes } = message
-
-  const newAccounts = new Map(oldData.accounts)
-  newAccounts.set(id, { ...oldAccount, ...changes })
-
-  return { revision, accounts: newAccounts }
+  accountsUpdatesBatchController.onUpdateMessage(message)
 }
