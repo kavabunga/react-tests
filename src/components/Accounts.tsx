@@ -2,12 +2,24 @@ import { memo, useCallback, useMemo } from 'react'
 
 import { cn } from '../shared/cn'
 import type { Account } from '../shared/schemas'
-import { useAccounts } from '../api/accounts/useAccounts'
+import { useAccounts, useAccountsSync, WebSocketStatus } from '../api/accounts/useAccounts'
 import { useSortAccounts } from './useSortAccounts'
 import { useFilterAccounts } from './useFilterAccounts'
 import { AccountFilter } from './AccountFilters'
 
 import './Accounts.css'
+
+const CONNECTION_STATUS_LABELS = {
+  UPDATING: 'Updating',
+  IN_SYNC: 'In Sync',
+  ERROR: 'Error',
+} as const
+
+function resolveConnectionStatus(status: WebSocketStatus, isFetching: boolean) {
+  if (isFetching || status === WebSocketStatus.Connecting) return CONNECTION_STATUS_LABELS.UPDATING
+  if (status === WebSocketStatus.Open) return CONNECTION_STATUS_LABELS.IN_SYNC
+  return CONNECTION_STATUS_LABELS.ERROR
+}
 
 const COLUMNS: { label: string; name: keyof Account }[] = [
   {
@@ -29,7 +41,10 @@ const COLUMNS: { label: string; name: keyof Account }[] = [
 ] as const
 
 export function Accounts() {
-  const { data, isLoading, error } = useAccounts()
+  const { data, isPending, isFetching, error } = useAccounts()
+  const { status, throttle, setThrottle } = useAccountsSync()
+
+  const connectionStatus = resolveConnectionStatus(status, isFetching)
 
   const accountsList = useMemo(() => {
     return Array.from(data?.accounts.values() ?? [])
@@ -46,12 +61,32 @@ export function Accounts() {
     [sort],
   )
 
-  if (isLoading) return <div>Loading...</div>
+  if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
 
   return (
     <div className="accounts-container">
-      <h1 className="accounts-table-header">Accounts</h1>
+      <div className="accounts-table-header-container">
+        <div className="accounts-table-header-item">
+          <h1 className="accounts-table-header">Accounts</h1>
+          <span
+            className={cn(
+              'accounts-table-header-badge',
+              connectionStatus === CONNECTION_STATUS_LABELS.IN_SYNC && 'active',
+            )}
+          >
+            {connectionStatus}
+          </span>
+        </div>
+        <input
+          className="accounts-table-header-input"
+          type="number"
+          value={throttle}
+          onChange={(e) => setThrottle(Number(e.target.value))}
+          min={0}
+          max={10000}
+        />
+      </div>
       <AccountFilter filter={filter} setFilter={setFilter} />
       <table className="accounts-table">
         <thead>

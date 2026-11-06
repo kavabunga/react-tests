@@ -104,14 +104,16 @@ type Row = {
   amountCents: number
   lastOperationAt: string
   tier: Tier
+  changedAtRevision: number
 }
 
 const rows = seedRows()
 let revision = 0
 
-export function listAccounts(): AccountList {
+export function listAccounts(changedAfter?: number): AccountList {
   const accounts = rows
-
+    // changedAfter is a cursor the caller already applied, so that revision is excluded.
+    .filter((row) => changedAfter === undefined || row.changedAtRevision > changedAfter)
     .map(toAccount)
     .sort(byRecentOperation)
 
@@ -133,6 +135,7 @@ export function applyTick(count: number, now = new Date()): AccountUpdated[] {
     row.amountCents = nextAmountCents(row.amountCents)
     row.lastOperationAt = at
     revision += 1
+    row.changedAtRevision = revision
     events.push({
       type: 'account.updated',
       revision,
@@ -166,6 +169,7 @@ function seedRows(): Row[] {
       amountCents: randomInt(0, 2_500_000),
       lastOperationAt: new Date(now - randomInt(0, month)).toISOString(),
       tier: index % 10 === 0 ? 'priority' : 'regular',
+      changedAtRevision: 0,
     })
   }
   return seeded

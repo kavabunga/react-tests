@@ -3,7 +3,7 @@ import express from 'express'
 import { WebSocket, WebSocketServer } from 'ws'
 import { applyTick, listAccounts, type AccountUpdated } from './store.ts'
 
-const TICK_MS = 1000
+const TICK_MS = 100
 const UPDATES_PER_TICK = 3
 const port = readPort(process.env.PORT)
 
@@ -17,8 +17,16 @@ app.use((_req, res, next) => {
   next()
 })
 
-app.get('/accounts', (_req, res) => {
-  res.json(listAccounts())
+app.get('/accounts', (req, res) => {
+  const changedAfter = readChangedAfter(req.query.revision)
+  if (changedAfter === null) {
+    res.status(400).json({ error: 'revision must be an integer >= 0' })
+    return
+  }
+  const timeout = Math.random() * 1000 + 1000
+  setTimeout(() => {
+    res.json(listAccounts(changedAfter))
+  }, timeout)
 })
 
 const server = createServer(app)
@@ -77,6 +85,15 @@ function broadcast(event: AccountUpdated) {
 
     client.send(JSON.stringify(event))
   }
+}
+
+// undefined: param omitted. null: present, but not an integer >= 0.
+function readChangedAfter(value: unknown): number | undefined | null {
+  if (value === undefined) return undefined
+  if (typeof value !== 'string' || !/^(0|[1-9]\d*)$/.test(value)) return null
+  const revision = Number(value)
+  if (!Number.isSafeInteger(revision)) return null
+  return revision
 }
 
 function readPort(value: string | undefined): number {

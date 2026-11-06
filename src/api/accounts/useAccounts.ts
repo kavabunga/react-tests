@@ -1,18 +1,35 @@
-import { useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+
+import { WebSocketStatus } from '../../shared/websocket'
 
 import { accountsQueryOptions } from './queries'
-import { getOrCreateAccountsWebSocket, closeAccountsWebSocket } from './websockets'
+import { accountWebsocket } from './accountsWebsocket'
+import { setAccountsUpdateThrottleDelay } from './updateAccounts'
 
-// TODO: разбить на два хука: useAccounts и useAccountsSync
+export { WebSocketStatus }
+
+const THROTTLE_DELAY_MS = 1000
+
 export function useAccounts() {
-  const queryClient = useQueryClient()
+  return useQuery(accountsQueryOptions())
+}
+
+export function useAccountsSync() {
+  const [status, setStatus] = useState<WebSocketStatus>(WebSocketStatus.Closed)
+  const [throttle, setThrottle] = useState(THROTTLE_DELAY_MS)
 
   useEffect(() => {
-    getOrCreateAccountsWebSocket()
+    const unsubscribe = accountWebsocket.subscribe({
+      onStatusChange: setStatus,
+    })
 
-    return closeAccountsWebSocket
-  }, [queryClient])
+    return unsubscribe
+  }, [])
 
-  return useQuery(accountsQueryOptions())
+  useEffect(() => {
+    setAccountsUpdateThrottleDelay(throttle)
+  }, [throttle])
+
+  return { status, throttle, setThrottle }
 }
