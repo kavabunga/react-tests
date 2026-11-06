@@ -5,7 +5,7 @@ import { WebSocketStatus } from '../../shared/websocket'
 
 import { accountsQueryOptions } from './queries'
 import { accountWebsocket } from './accountsWebsocket'
-import { accountsUpdatesBatchController } from './messages'
+import { setAccountsUpdateThrottleDelay } from './updateAccounts'
 
 export { WebSocketStatus }
 
@@ -28,7 +28,7 @@ export function useAccountsSync() {
   }, [])
 
   useEffect(() => {
-    accountsUpdatesBatchController.setThrottleDelay(throttle)
+    setAccountsUpdateThrottleDelay(throttle)
   }, [throttle])
 
   return { status, throttle, setThrottle }

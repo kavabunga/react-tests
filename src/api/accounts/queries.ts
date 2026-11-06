@@ -1,71 +1,34 @@
-import { QueryClient, queryOptions } from '@tanstack/react-query'
-import { API_URL } from '../../shared/consts'
-import { ApiError, isApiError } from '../../shared/errors'
-import {
-  parseAccountList,
-  type AccountList,
-  type AccountListQuery,
-  type AccountsUpdatesBatch,
-} from '../../shared/schemas'
+import { queryOptions, type QueryFunctionContext } from '@tanstack/react-query'
+import { isApiError } from '../../shared/errors'
+import { type AccountList } from '../../shared/schemas'
+import { mergeMaps } from '../../shared/utils'
 import { queryClient } from '../../shared/client'
-import { mergeAccounts, parseNumbersRange } from './utils'
+
+import { fetchAccounts } from './fetchAccounts'
 
 const ACCOUNTS_MAX_RETRY_COUNT = 3
 
-export const accountKeys = {
+const accountKeys = {
   all: ['accounts'] as const,
 }
 
-function createAccountsURL(query?: AccountListQuery) {
-  const url = new URL(`${API_URL}/accounts`)
-  if (query?.revision !== undefined) {
-    url.searchParams.set('revision', query.revision.toString())
-  }
-  return url.toString()
-}
-
-async function fetchAccounts({
-  query,
-  signal,
-}: {
-  query?: AccountListQuery
-  signal: AbortSignal
-}): Promise<AccountList> {
-  const url = createAccountsURL(query)
-  const response = await fetch(url, { signal })
-
-  if (!response.ok) {
-    const body = await response.json().catch(() => null)
-    throw new ApiError(body?.error ?? `HTTP ${response.status}`, response.status)
-  }
-
-  const data = await response.json()
-  const newAccountsList = parseAccountList(data)
-
-  return newAccountsList
-}
-
-async function getAccounts({
-  signal,
-  client,
-}: {
-  signal: AbortSignal
-  client: QueryClient
-}): Promise<AccountList> {
-  // Fetch only the difference between the current revision and the new revision
+async function getAccounts({ signal, client }: QueryFunctionContext<typeof accountKeys.all>) {
+  // Запрашиваем только изменения между текущей версией и новой версией
   const currentRevision = client.getQueryData<AccountList>(accountKeys.all)?.revision
-  let newAccountsList = await fetchAccounts({ query: { revision: currentRevision }, signal })
+  const newAccountsList = await fetchAccounts({ query: { revision: currentRevision }, signal })
 
+  // Здесь нам важно получить текущие аккаунты именно после фетча, ё
+  // чтобы все что в них добавится по вебсокетам пока идет фетч, было учтено
+
+  // TODO: Проверить создается ли тут реально новый объект или он мутирутся и можно деструктуризировать его выше
+  // NOTE: SetQueryData не мутирует объект, а создает новый, поэтому не нужно деструктуризировать client.getQueryData выше
   const currentAccounts = client.getQueryData<AccountList>(accountKeys.all)?.accounts
 
   if (currentAccounts) {
-    const newAccounts = new Map(currentAccounts)
-    for (const account of newAccountsList.accounts) {
-      newAccounts.set(account[0], account[1])
-    }
+    const { accounts, revision } = newAccountsList
     return {
-      ...newAccountsList,
-      accounts: newAccounts,
+      accounts: mergeMaps(currentAccounts, accounts),
+      revision,
     }
   }
 
@@ -84,60 +47,18 @@ export function accountsQueryOptions() {
   })
 }
 
-export function batchUpdateAccounts(updates: AccountsUpdatesBatch): boolean {
-  const cachedData = queryClient.getQueryData<AccountList>(accountKeys.all)
-
-  // Keep the revision updates consistent
-  if (!cachedData) return false
-
-  const currentRevision = cachedData.revision
-
-  const filteredAndSortedUpdates = filterAndSortUpdates(updates, currentRevision)
-  if (filteredAndSortedUpdates.length === 0) return false
-
-  const newAccounts = mergeAccounts({
-    accounts: cachedData.accounts,
-    updates: filteredAndSortedUpdates,
-  })
-
-  const revisions = filteredAndSortedUpdates.map((update) => update.revision)
-  const correctRevision = getNextCorrectRevision(currentRevision, revisions)
-  const { end: endRevision } = parseNumbersRange(revisions)
-
-  // Updating the query data directly due to high frequency of updates
-  queryClient.setQueryData(accountKeys.all, () => ({
-    revision: correctRevision,
-    accounts: newAccounts,
-  }))
-
-  // If after the update the revision is not the last one from the batch, invalidate the query to fetch the next updates
-  if (correctRevision !== endRevision) {
-    console.warn(
-      'Accounts update revision is not consistent. Fetching updates starting from that revision',
-    )
-    queryClient.invalidateQueries({ queryKey: accountKeys.all })
-  }
-
-  return true
+export function getCachedAccounts() {
+  return queryClient.getQueryData<AccountList>(accountKeys.all)
 }
 
-function getNextCorrectRevision(currentRevision: number, revisions: number[]): number {
-  const { start, lastUninterrupted } = parseNumbersRange(revisions)
-
-  // Keep the current revision if there are missing revisions
-  // between the current and the starting revision
-  if (currentRevision < start - 1) {
-    return currentRevision
-  }
-
-  return lastUninterrupted
+export function getAccountsQueryState() {
+  return queryClient.getQueryState(accountKeys.all)
 }
 
-function filterAndSortUpdates(
-  updates: AccountsUpdatesBatch,
-  currentRevision: number,
-): AccountsUpdatesBatch {
-  return [...updates]
-    .filter((update) => update.revision > currentRevision)
-    .sort((a, b) => a.revision - b.revision)
+export function setCachedAccounts(accounts: AccountList) {
+  queryClient.setQueryData(accountKeys.all, () => accounts)
+}
+
+export function invalidateCachedAccounts() {
+  queryClient.invalidateQueries({ queryKey: accountKeys.all }, { cancelRefetch: false })
 }

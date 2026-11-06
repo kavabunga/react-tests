@@ -45,7 +45,8 @@ export type Account = z.infer<typeof accountSchema>
 export type Tier = z.infer<typeof tierSchema>
 export type Message = z.infer<typeof messageSchema>
 
-export type AccountsUpdatesBatch = Array<AccountChanges & { revision: number; id: string }>
+export type AccountUpdate = AccountChanges & { revision: number; id: string }
+export type AccountsUpdatesBatch = Array<AccountUpdate>
 
 export function parseAccountList(data: unknown): AccountList {
   return accountListSchema.parse(data)

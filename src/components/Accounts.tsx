@@ -10,10 +10,15 @@ import { AccountFilter } from './AccountFilters'
 import './Accounts.css'
 
 const CONNECTION_STATUS_LABELS = {
-  [WebSocketStatus.Connecting]: 'Connecting',
-  [WebSocketStatus.Open]: 'In Sync',
-  [WebSocketStatus.Closed]: 'Out of Sync',
-  [WebSocketStatus.Error]: 'Error',
+  UPDATING: 'Updating',
+  IN_SYNC: 'In Sync',
+  ERROR: 'Error',
+} as const
+
+function resolveConnectionStatus(status: WebSocketStatus, isFetching: boolean) {
+  if (isFetching || status === WebSocketStatus.Connecting) return CONNECTION_STATUS_LABELS.UPDATING
+  if (status === WebSocketStatus.Open) return CONNECTION_STATUS_LABELS.IN_SYNC
+  return CONNECTION_STATUS_LABELS.ERROR
 }
 
 const COLUMNS: { label: string; name: keyof Account }[] = [
@@ -36,8 +41,10 @@ const COLUMNS: { label: string; name: keyof Account }[] = [
 ] as const
 
 export function Accounts() {
-  const { data, isLoading, error } = useAccounts()
+  const { data, isPending, isFetching, error } = useAccounts()
   const { status, throttle, setThrottle } = useAccountsSync()
+
+  const connectionStatus = resolveConnectionStatus(status, isFetching)
 
   const accountsList = useMemo(() => {
     return Array.from(data?.accounts.values() ?? [])
@@ -54,7 +61,7 @@ export function Accounts() {
     [sort],
   )
 
-  if (isLoading) return <div>Loading...</div>
+  if (isPending) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
 
   return (
@@ -65,10 +72,10 @@ export function Accounts() {
           <span
             className={cn(
               'accounts-table-header-badge',
-              status === WebSocketStatus.Open && 'active',
+              connectionStatus === CONNECTION_STATUS_LABELS.IN_SYNC && 'active',
             )}
           >
-            {CONNECTION_STATUS_LABELS[status]}
+            {connectionStatus}
           </span>
         </div>
         <input

@@ -23,7 +23,10 @@ app.get('/accounts', (req, res) => {
     res.status(400).json({ error: 'revision must be an integer >= 0' })
     return
   }
-  res.json(listAccounts(changedAfter))
+  const timeout = Math.random() * 1000 + 1000
+  setTimeout(() => {
+    res.json(listAccounts(changedAfter))
+  }, timeout)
 })
 
 const server = createServer(app)
